@@ -34,6 +34,7 @@ class ClientSerializer(serializers.ModelSerializer):
             'city',
             'country',
             'phone_number',
+            'company',
             'company_name',
             'date_created',
             'lead',
