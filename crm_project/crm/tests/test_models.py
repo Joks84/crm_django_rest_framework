@@ -1,5 +1,5 @@
 from django.test import TestCase
-from crm.models import Client, Company, Agent, User
+from crm.models import Client, Company, Agent, User, Tasks
 import datetime
 
 
@@ -34,6 +34,13 @@ class TestModels(TestCase):
             lead_owner=self.agent,
         )
 
+        self.task = Tasks.objects.create(
+            headline="First Task Headline",
+            body="Body of the task",
+            owner=self.agent,
+            progress="Opened",
+        )
+
     def test_company(self):
         # Testing Company model fields.
         self.assertEqual(self.company.company, "Company Name")
@@ -62,3 +69,12 @@ class TestModels(TestCase):
         self.assertEqual(self.client.notes, "Some Note")
         self.assertEqual(self.client.lead_owner.user, self.user)
         self.assertEqual(self.client.date_created, datetime.date.today())
+
+    def test_tasks(self):
+        # Testing Tasks model
+        self.assertEqual(self.task.headline, "First Task Headline")
+        self.assertEqual(self.task.body, "Body of the task")
+        self.assertEqual(self.task.owner.user, self.user)
+        self.assertEqual(self.task.progress, "Opened")
+        self.assertEqual(self.task.date_created, datetime.date.today())
+

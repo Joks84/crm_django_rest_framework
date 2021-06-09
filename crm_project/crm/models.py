@@ -19,6 +19,12 @@ SOURCE_CHOICES = (
     ('Else', 'Else'),
 )
 
+PROGRESS_CHOICES = (
+    ('Opened', 'Opened'),
+    ('In Progress', 'In Progress'),
+    ('Finished', 'Finished'),
+)
+
 
 class User(AbstractUser):
     """Nothing needs to be changed, we are keeping all the fields from the AbstractUser."""
@@ -70,5 +76,17 @@ class Client(models.Model):
 
     def __str__(self):
         return self.full_name()
+
+
+class Tasks(models.Model):
+    """Task model."""
+    headline = models.CharField(max_length=250)
+    body = models.TextField()
+    owner = models.ForeignKey(Agent, on_delete=models.SET_NULL, blank=True, null=True)
+    progress = models.CharField(choices=PROGRESS_CHOICES, default='Opened', max_length=20)
+    date_created = models.DateField(auto_now_add=True)
+
+    def __str__(self):
+        return self.headline
 
 

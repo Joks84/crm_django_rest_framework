@@ -5,6 +5,7 @@ from django.urls import reverse
 from rest_framework import status
 from datetime import date
 
+# run from project directory: python manage.py test crm.tests.test_client_viewset
 
 class TestClientViewSet(APITestCase):
     def setUp(self):
