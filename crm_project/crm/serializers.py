@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Client, Company
+from .models import Client, Company, Tasks
 
 
 class ListClientSerializer(serializers.ModelSerializer):
@@ -42,6 +42,7 @@ class ClientSerializer(serializers.ModelSerializer):
             'notes',
             'source',
             'lead_owner_name',
+            'lead_owner',
         ]
 
     def get_lead_owner_name(self, client):
@@ -89,3 +90,62 @@ class DownloadFileSerializer(serializers.ModelSerializer):
         else:
             return " "
 
+
+class CompanyListSerializer(serializers.ModelSerializer):
+    """Serializer for listing companies."""
+    class Meta:
+        model = Company
+        fields = [
+            'company',
+            'country',
+            'lead',
+        ]
+
+
+class CompanySerializer(serializers.ModelSerializer):
+    """Detailed serializer for companies."""
+    class Meta:
+        model = Company
+        fields = "__all__"
+
+
+class TaskListSerializer(serializers.ModelSerializer):
+    """Serializer for listing tasks."""
+
+    task_owner_name = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Tasks
+        fields = [
+            'headline',
+            'task_owner_name',
+            'progress',
+        ]
+
+    def get_task_owner_name(self, task):
+        if owner_name := task.owner:
+            return owner_name.user.username
+        else:
+            return " "
+
+
+class TaskDetailSerializer(serializers.ModelSerializer):
+    """Serializer used for listing all the fields of the Task."""
+    task_owner_name = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Tasks
+        fields = [
+            'headline',
+            'body',
+            'task_owner_name',
+            'owner',
+            'progress',
+            'date_created',
+        ]
+
+    def get_task_owner_name(self, task):
+        if owner_name := task.owner:
+            return owner_name.user.username
+        else:
+            return " "

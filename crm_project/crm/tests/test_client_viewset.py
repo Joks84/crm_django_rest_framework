@@ -64,8 +64,10 @@ class TestClientViewSet(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(reverse('clients-detail', args=[self.clients.id]), f'/clients/{self.clients.id}/')
 
-       # Testing if the response data matches the data from created client.
+        # Testing if the response data matches the data from created client.
         data = response.data
+
+        self.assertEqual(len(data), 15)
         self.assertEqual(data['first_name'], self.clients.first_name)
         self.assertEqual(data['last_name'], self.clients.last_name)
         self.assertEqual(data['email'], self.clients.email)
@@ -79,7 +81,8 @@ class TestClientViewSet(APITestCase):
         self.assertEqual(data['title'], self.clients.title)
         self.assertEqual(data['notes'], self.clients.notes)
         self.assertEqual(data['source'], self.clients.source)
-        self.assertEqual(data['lead_owner_name'], self.user.username)
+        self.assertEqual(data['lead_owner_name'], self.agent.user.username)
+        self.assertEqual(data['lead_owner'], self.agent.id)
 
         # Testing if response data matches the serializer which is been used.
         serializer = ClientSerializer([self.clients], many=True)
@@ -100,7 +103,7 @@ class TestClientViewSet(APITestCase):
             'title': 'CTO',
             'notes': 'John Notes',
             'source': 'Newsletter',
-            'lead_owner_name': " ",
+            'lead_owner': self.agent.id,
         }
 
         # Checking response's status code.
@@ -108,6 +111,7 @@ class TestClientViewSet(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         # Checking the response data.
         data = response.data
+
         self.assertEqual(data['first_name'], create_data['first_name'])
         self.assertEqual(data['last_name'], create_data['last_name'])
         self.assertEqual(data['email'], create_data['email'])
@@ -121,5 +125,6 @@ class TestClientViewSet(APITestCase):
         self.assertEqual(data['title'], create_data['title'])
         self.assertEqual(data['notes'], create_data['notes'])
         self.assertEqual(data['source'], create_data['source'])
-        self.assertEqual(data['lead_owner_name'], create_data['lead_owner_name'])
+        self.assertEqual(data['lead_owner_name'], self.agent.user.username)
+        self.assertEqual(data['lead_owner'], self.agent.id)
 

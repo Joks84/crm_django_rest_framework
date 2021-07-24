@@ -1,7 +1,9 @@
-from .serializers import ListClientSerializer, ClientSerializer, DownloadFileSerializer
+from .serializers import ListClientSerializer, \
+    ClientSerializer, DownloadFileSerializer, CompanyListSerializer, CompanySerializer, TaskListSerializer, \
+    TaskDetailSerializer
 from rest_framework import viewsets
 from rest_framework.response import Response
-from .models import Client
+from .models import Client, Company, Tasks
 from rest_framework.views import APIView
 from drf_renderer_xlsx.renderers import XLSXRenderer
 from drf_renderer_xlsx.mixins import XLSXFileMixin
@@ -79,6 +81,30 @@ class ClientViewSet(XLSXFileMixin, viewsets.ModelViewSet):
         response = Response(content)
         response['content-disposition'] = "attachment; filename='my_file.csv'"
         return response
+
+
+class CompanyViewSet(viewsets.ModelViewSet):
+    queryset = Company.objects.all()
+    filter_backends = (DjangoFilterBackend,)
+    filter_fields = ('company',)
+
+    def get_serializer_class(self):
+        if self.action in ['retrieve', 'create']:
+            serializer_class = CompanySerializer
+        else:
+            serializer_class = CompanyListSerializer
+        return serializer_class
+
+
+class TasksViewSet(viewsets.ModelViewSet):
+    queryset = Tasks.objects.all()
+
+    def get_serializer_class(self):
+        if self.action in ['retrieve', 'create']:
+            serializer_class = TaskDetailSerializer
+        else:
+            serializer_class = TaskListSerializer
+        return serializer_class
 
 #
 # class HomepageViewSet(viewsets.ViewSet):
